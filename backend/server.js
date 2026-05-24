@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const { pool } = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
+const walletRoutes = require('./src/routes/walletRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json()); // Parses incoming application/json body elements
 app.use('/api/auth', authRoutes);
+app.use('/api/wallet', walletRoutes);
 
 // Health Check Route to test connectivity
 app.get('/health', async (req, res) => {
