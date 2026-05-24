@@ -21,10 +21,10 @@ async function init() {
   try {
     await client.connect();
     console.log('✅ Connected to default "postgres" database.');
-    
+
     const dbName = process.env.DB_NAME || 'stash_ledger';
     const res = await client.query('SELECT 1 FROM pg_database WHERE datname = $1', [dbName]);
-    
+
     if (res.rowCount === 0) {
       console.log(`🔨 Database "${dbName}" does not exist. Creating database...`);
       await client.query(`CREATE DATABASE "${dbName}"`);
