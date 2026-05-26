@@ -1,20 +1,41 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http'); // Native Node utility
+const { Server } = require('socket.io');
 require('dotenv').config();
+
 const { pool } = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const walletRoutes = require('./src/routes/walletRoutes');
+const { initSocket } = require('./src/sockets/socketHandler');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Standard Middleware
+// Create raw HTTP server wrapper around our Express instance
+const server = http.createServer(app);
+
+// Initialize Socket.IO with broad Cross-Origin Resource Sharing rules
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Adjust to specific frontend URL during deep deployment production cycles
+        methods: ["GET", "POST"]
+    }
+});
+
+// Attach Socket infrastructure and pass global io reference downward
+initSocket(io);
+app.set('io', io); // Makes our global socket server accessible within our API endpoints
+
+// Standard Application Middleware
 app.use(cors());
-app.use(express.json()); // Parses incoming application/json body elements
+app.use(express.json());
+
+// Routes Mounting
 app.use('/api/auth', authRoutes);
 app.use('/api/wallet', walletRoutes);
 
-// Health Check Route to test connectivity
+// Base System Health Check Route
 app.get('/health', async (req, res) => {
     try {
         const dbCheck = await pool.query('SELECT NOW()');
@@ -24,7 +45,7 @@ app.get('/health', async (req, res) => {
     }
 });
 
-// Start the server instance
-app.listen(PORT, () => {
-    console.log(`🚀 Stash Backend Ledger listening smoothly on port ${PORT}`);
+// Boot listening execution via server wrapper instance rather than app instance
+server.listen(PORT, () => {
+    console.log(`🚀 Real-Time Stash Backend Ledger listening smoothly on port ${PORT}`);
 });

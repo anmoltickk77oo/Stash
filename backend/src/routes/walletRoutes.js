@@ -9,5 +9,6 @@ const validateInput = require('../middleware/validateInput');
 // Protected endpoints mapping
 router.post('/transfer', requireAuth, validateInput, transferController.executeTransfer);
 router.get('/history', requireAuth, transferController.getHistory);
+router.get('/balance', requireAuth, transferController.getBalance);
 
 module.exports = router;

@@ -1,16 +1,15 @@
+// ... Keep your existing imports at top
 const { pool } = require('../config/db');
 
 exports.executeTransfer = async (req, res) => {
     const { receiver_wallet_id, amount } = req.body;
-
-    // Grab the sender's wallet ID from the verified JWT payload mapped in Phase 2
     const sender_user_id = req.user.id;
     const transferAmount = parseFloat(amount);
 
     const client = await pool.connect();
 
     try {
-        // 1. Fetch the sender's wallet details first to identify their true wallet ID
+        // 1. Fetch sender's wallet details first
         const senderWalletCheck = await client.query('SELECT id FROM wallets WHERE user_id = $1', [sender_user_id]);
         if (senderWalletCheck.rows.length === 0) {
             return res.status(404).json({ error: 'Sender wallet structure not found.' });
@@ -21,37 +20,31 @@ exports.executeTransfer = async (req, res) => {
             return res.status(400).json({ error: 'Self-transfers are mathematically prohibited by database invariant.' });
         }
 
-        // 2. Start the isolated ACID Transaction block
         await client.query('BEGIN');
 
-        // 3. DEADLOCK PREVENTION: Order the execution locks by primary key ID sequentially
+        // Deadlock Prevention ordering logic
         const firstLockId = Math.min(sender_wallet_id, receiver_wallet_id);
         const secondLockId = Math.max(sender_wallet_id, receiver_wallet_id);
-
-        // Lock the first wallet row
         await client.query('SELECT balance FROM wallets WHERE id = $1 FOR UPDATE', [firstLockId]);
-        // Lock the second wallet row
         await client.query('SELECT balance FROM wallets WHERE id = $1 FOR UPDATE', [secondLockId]);
 
-        // 4. Verify the sender has sufficient liquidity now that the row is locked exclusively to us
         const senderBalanceQuery = await client.query('SELECT balance FROM wallets WHERE id = $1', [sender_wallet_id]);
         const currentSenderBalance = parseFloat(senderBalanceQuery.rows[0].balance);
 
         if (currentSenderBalance < transferAmount) {
-            // Abort immediately if funds are missing
             await client.query('ROLLBACK');
             return res.status(400).json({ error: 'Insufficient ledger balance to complete transfer execution.' });
         }
 
-        // 5. Deduct funds from Sender
+        // Deduct from Sender
         await client.query(
             'UPDATE wallets SET balance = balance - $1, updated_at = NOW() WHERE id = $2',
             [transferAmount, sender_wallet_id]
         );
 
-        // 6. Credit funds to Receiver
+        // Credit to Receiver. Retrieve receiver user_id during this update query to trace their socket room!
         const receiverUpdate = await client.query(
-            'UPDATE wallets SET balance = balance + $1, updated_at = NOW() WHERE id = $2 RETURNING id',
+            'UPDATE wallets SET balance = balance + $1, updated_at = NOW() WHERE id = $2 RETURNING user_id',
             [transferAmount, receiver_wallet_id]
         );
 
@@ -59,8 +52,9 @@ exports.executeTransfer = async (req, res) => {
             await client.query('ROLLBACK');
             return res.status(404).json({ error: 'Target receiver wallet does not exist.' });
         }
+        const receiver_user_id = receiverUpdate.rows[0].user_id;
 
-        // 7. Write immutable event record to the append-only transaction history table
+        // Log append-only transaction history row
         const auditLogQuery = `
       INSERT INTO transactions (sender_wallet_id, receiver_wallet_id, amount)
       VALUES ($1, $2, $3)
@@ -69,23 +63,41 @@ exports.executeTransfer = async (req, res) => {
         const auditLogResult = await client.query(auditLogQuery, [sender_wallet_id, receiver_wallet_id, transferAmount]);
         const transactionRecord = auditLogResult.rows[0];
 
-        // 8. Atomically finalize everything directly onto storage disk
+        // Atomically save to disk
         await client.query('COMMIT');
 
-        // Return receipt payload (we will use this payload for the WebSockets layer in Phase 4!)
+        // --- NEW REAL-TIME SOCKET DISPATCH LAYER ---
+        // Extract the global Socket Server reference we mounted in server.js
+        const io = req.app.get('io');
+
+        // Dispatch instant execution notification details to the sender's secure room
+        io.to(`user_room_${sender_user_id}`).emit('ledger_update', {
+            type: 'DEBIT',
+            amount: transferAmount,
+            transaction: transactionRecord,
+            message: `You successfully transferred $${transferAmount.toFixed(2)}.`
+        });
+
+        // Dispatch instant execution notification details to the receiver's secure room
+        io.to(`user_room_${receiver_user_id}`).emit('ledger_update', {
+            type: 'CREDIT',
+            amount: transferAmount,
+            transaction: transactionRecord,
+            message: `You received a transfer of $${transferAmount.toFixed(2)}.`
+        });
+        // -------------------------------------------
+
         res.status(200).json({
             success: true,
-            message: 'Atomic P2P transfer settled successfully.',
+            message: 'Atomic P2P transfer settled and live sync event propagated.',
             transaction: transactionRecord
         });
 
     } catch (err) {
-        // If anything breaks, abort completely to protect financial balances
         await client.query('ROLLBACK');
         console.error('Core transfer failure rollback issued:', err);
         res.status(500).json({ error: 'Ledger processing engine failed to execute transaction safely.' });
     } finally {
-        // Return connection resource to the pool
         client.release();
     }
 };
@@ -110,5 +122,20 @@ exports.getHistory = async (req, res) => {
         res.status(200).json({ history: results.rows });
     } catch (err) {
         res.status(500).json({ error: 'Failed to extract ledger historical rows.' });
+    }
+};
+
+// Balance fetcher endpoint
+exports.getBalance = async (req, res) => {
+    const user_id = req.user.id;
+    try {
+        const result = await pool.query('SELECT balance FROM wallets WHERE user_id = $1', [user_id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Wallet profile not found.' });
+        }
+        res.status(200).json({ balance: result.rows[0].balance });
+    } catch (err) {
+        console.error('Balance retrieval error:', err);
+        res.status(500).json({ error: 'Failed to retrieve ledger balance.' });
     }
 };
