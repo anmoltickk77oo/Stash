@@ -34,6 +34,11 @@ const initSocket = (io) => {
         // Join a isolated, user-specific secure private room based purely on their structural user id
         socket.join(`user_room_${userId}`);
 
+        // Lightweight active latency heartbeat
+        socket.on('ping_check', (timestamp) => {
+            socket.emit('pong_check', timestamp);
+        });
+
         socket.on('disconnect', () => {
             console.log(`❌ Socket connection closed for User ID ${userId}`);
             delete userSocketMap[userId];

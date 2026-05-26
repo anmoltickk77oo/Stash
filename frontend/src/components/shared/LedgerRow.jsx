@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function LedgerRow({ tx, currentUserWalletId }) {
+export default function LedgerRow({ tx, currentUserWalletId, onClick }) {
   // Determine if this transaction is a DEBIT or a CREDIT relative to the current user's wallet
   const isDebit = parseInt(tx.sender_id) === parseInt(currentUserWalletId);
   const type = isDebit ? 'debit' : 'credit';
@@ -17,7 +17,7 @@ export default function LedgerRow({ tx, currentUserWalletId }) {
   });
 
   return (
-    <div className="ledger-row">
+    <div className="ledger-row ledger-row-clickable" onClick={onClick}>
       <div className="ledger-meta">
         <div className={`row-icon-box ${type}`}>
           {isDebit ? (
