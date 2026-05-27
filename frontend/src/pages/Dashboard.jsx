@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar';
 import LedgerRow from '../components/shared/LedgerRow';
 import TransferModal from '../components/shared/TransferModal';
 import AuditReceiptDrawer from '../components/shared/AuditReceiptDrawer';
+import FaucetModal from '../components/shared/FaucetModal';
 export default function Dashboard() {
   const { user, token } = useContext(AuthContext);
   
@@ -75,6 +76,7 @@ export default function Dashboard() {
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFaucetModalOpen, setIsFaucetModalOpen] = useState(false);
   
   // Sliding Receipt Drawer States
   const [selectedTx, setSelectedTx] = useState(null);
@@ -242,29 +244,16 @@ export default function Dashboard() {
 
   const totalDebits = Object.values(categoryDebits).reduce((a, b) => a + b, 0);
 
-  // Sandbox developer faucet refill trigger
-  const handleFaucetRequest = async () => {
-    setFaucetLoading(true);
-    try {
-      await api.post('/wallet/faucet');
-      addToast(
-        '📥 Faucet Funds Minted',
-        'Successfully credited $500.00 to your ledger wallet.',
-        'credit'
-      );
-      fetchBalance();
-      fetchHistory();
-      auditLedgerIntegrity();
-    } catch (err) {
-      console.error(err);
-      addToast(
-        '⚠️ Faucet Exhausted',
-        err.response?.data?.error || 'Failed to mint faucet liquidity.',
-        'debit'
-      );
-    } finally {
-      setFaucetLoading(false);
-    }
+  // Sandbox developer faucet refill success trigger
+  const handleFaucetSuccess = () => {
+    addToast(
+      '📥 Faucet Funds Minted',
+      'Successfully credited $500.00 to your ledger wallet.',
+      'credit'
+    );
+    fetchBalance();
+    fetchHistory();
+    auditLedgerIntegrity();
   };
 
   // Radial Ring Metrics
@@ -426,51 +415,50 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Quick Neon Action Trigger */}
-          <button
-            className="btn btn-neon"
-            onClick={() => setIsModalOpen(true)}
-            disabled={loadingBalance}
-            style={{ width: '100%', padding: '14px' }}
-          >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {/* Quick Neon Action Trigger Row */}
+          <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <button
+              className="btn btn-neon"
+              onClick={() => setIsModalOpen(true)}
+              disabled={loadingBalance}
+              style={{ flex: 1, padding: '14px' }}
             >
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-            Send Money
-          </button>
-
-          {/* Sandbox Developer Faucet Widget */}
-          <div 
-            className="glass-panel interactive-spotlight" 
-            onMouseMove={handleSpotlightMouseMove}
-            style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}
-          >
-            <h3 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
-              Sandbox Faucet
-            </h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>Mint $500.00 instantly to test transfers in demonstration environments.</p>
+              Send Money
+            </button>
             <button
               className="btn"
-              onClick={handleFaucetRequest}
-              disabled={loadingBalance || faucetLoading}
-              style={{ width: '100%', padding: '10px', borderColor: 'rgba(16, 185, 129, 0.3)', color: 'var(--color-success)', background: 'rgba(16, 185, 129, 0.04)' }}
+              onClick={() => setIsFaucetModalOpen(true)}
+              disabled={loadingBalance}
+              style={{ flex: 1, padding: '14px', borderColor: 'rgba(16, 185, 129, 0.3)', color: 'var(--color-success)', background: 'rgba(16, 185, 129, 0.04)' }}
               onMouseEnter={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.08)'}
               onMouseLeave={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.04)'}
             >
-              {faucetLoading ? 'Minting...' : 'Request $500.00 Funds'}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              Claim Faucet
             </button>
           </div>
 
@@ -829,6 +817,40 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* Viewport-anchored Floating Action Dock */}
+      <div className="floating-action-dock">
+        <span className="floating-action-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+          Actions
+        </span>
+        <button
+          className="btn btn-neon"
+          onClick={() => setIsModalOpen(true)}
+          disabled={loadingBalance}
+          style={{ padding: '8px 16px', margin: 0 }}
+        >
+          Send Money
+        </button>
+        <button
+          className="btn"
+          onClick={() => setIsFaucetModalOpen(true)}
+          disabled={loadingBalance}
+          style={{ 
+            padding: '8px 16px', 
+            margin: 0, 
+            borderColor: 'rgba(16, 185, 129, 0.3)', 
+            color: 'var(--color-success)', 
+            background: 'rgba(16, 185, 129, 0.04)' 
+          }}
+          onMouseEnter={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.08)'}
+          onMouseLeave={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.04)'}
+        >
+          Claim Faucet
+        </button>
+      </div>
+
       {/* Transfer Modal overlay */}
       <TransferModal
         isOpen={isModalOpen}
@@ -836,6 +858,13 @@ export default function Dashboard() {
         onSuccess={handleTransferSuccess}
         currentBalance={balance}
         currentUserWalletId={user?.wallet_id}
+      />
+
+      {/* Faucet Modal overlay */}
+      <FaucetModal
+        isOpen={isFaucetModalOpen}
+        onClose={() => setIsFaucetModalOpen(false)}
+        onSuccess={handleFaucetSuccess}
       />
 
       {/* Slide-in Cryptographic Audit Receipt Drawer */}

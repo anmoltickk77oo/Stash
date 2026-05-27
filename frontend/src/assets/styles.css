@@ -2262,3 +2262,43 @@ a, button, input {
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
 
+/* Floating Action Dock */
+.floating-action-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 12, 33, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  padding: 10px 16px;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(124, 58, 237, 0.2);
+  animation: slide-in-bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-action-label {
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.floating-action-dock .btn {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  border-radius: 50px;
+}
+
+
