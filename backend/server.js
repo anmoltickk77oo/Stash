@@ -40,7 +40,7 @@ app.use('/api/wallet', walletRoutes);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Fallback non-API router calls back to React Client app (supporting SPA routing)
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     // Only serve index.html if the request isn't an API query
     if (!req.path.startsWith('/api')) {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
