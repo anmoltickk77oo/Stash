@@ -105,3 +105,27 @@ exports.login = async (req, res) => {
         res.status(500).json({ error: 'Internal system processing authentication failure.' });
     }
 };
+
+exports.searchUsers = async (req, res) => {
+    const { query } = req.query;
+    const currentUserId = req.user.id;
+
+    if (!query || query.trim() === '') {
+        return res.status(200).json({ users: [] });
+    }
+
+    try {
+        const searchQuery = `
+            SELECT u.id, u.username, u.email, w.id AS wallet_id
+            FROM users u
+            INNER JOIN wallets w ON u.id = w.user_id
+            WHERE u.id != $1 AND (u.username ILIKE $2 OR u.email ILIKE $2)
+            LIMIT 8;
+        `;
+        const result = await pool.query(searchQuery, [currentUserId, `%${query.trim()}%`]);
+        res.status(200).json({ users: result.rows });
+    } catch (err) {
+        console.error('Search users failure:', err);
+        res.status(500).json({ error: 'Failed to search users.' });
+    }
+};

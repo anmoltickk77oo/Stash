@@ -10,5 +10,7 @@ const validateInput = require('../middleware/validateInput');
 router.post('/transfer', requireAuth, validateInput, transferController.executeTransfer);
 router.get('/history', requireAuth, transferController.getHistory);
 router.get('/balance', requireAuth, transferController.getBalance);
+router.get('/verify-ledger', requireAuth, transferController.verifyLedger);
+router.post('/faucet', requireAuth, transferController.executeFaucet);
 
 module.exports = router;

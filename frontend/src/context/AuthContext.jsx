@@ -8,10 +8,10 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync session state from localStorage on load
+  // Sync session state from sessionStorage on load
   useEffect(() => {
-    const savedToken = localStorage.getItem('stash_token');
-    const savedUser = localStorage.getItem('stash_user');
+    const savedToken = sessionStorage.getItem('stash_token');
+    const savedUser = sessionStorage.getItem('stash_user');
 
     if (savedToken && savedUser) {
       try {
@@ -38,8 +38,8 @@ export const AuthProvider = ({ children }) => {
         wallet_id: userData.wallet_id
       };
 
-      localStorage.setItem('stash_token', userToken);
-      localStorage.setItem('stash_user', JSON.stringify(completeUser));
+      sessionStorage.setItem('stash_token', userToken);
+      sessionStorage.setItem('stash_user', JSON.stringify(completeUser));
       
       setToken(userToken);
       setUser(completeUser);
@@ -66,8 +66,8 @@ export const AuthProvider = ({ children }) => {
         wallet_id: wallet_id
       };
 
-      localStorage.setItem('stash_token', userToken);
-      localStorage.setItem('stash_user', JSON.stringify(completeUser));
+      sessionStorage.setItem('stash_token', userToken);
+      sessionStorage.setItem('stash_user', JSON.stringify(completeUser));
 
       setToken(userToken);
       setUser(completeUser);
@@ -83,8 +83,8 @@ export const AuthProvider = ({ children }) => {
 
   // Logout/Sign-out Action
   const logout = () => {
-    localStorage.removeItem('stash_token');
-    localStorage.removeItem('stash_user');
+    sessionStorage.removeItem('stash_token');
+    sessionStorage.removeItem('stash_user');
     setToken(null);
     setUser(null);
   };
@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
     setUser((prevUser) => {
       if (!prevUser) return null;
       const updatedUser = { ...prevUser, ...updatedFields };
-      localStorage.setItem('stash_user', JSON.stringify(updatedUser));
+      sessionStorage.setItem('stash_user', JSON.stringify(updatedUser));
       return updatedUser;
     });
   };

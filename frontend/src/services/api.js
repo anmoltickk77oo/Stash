@@ -7,7 +7,7 @@ const api = axios.create({
 // Interceptor to automatically attach JWT authorization header on outgoing queries
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('stash_token');
+    const token = sessionStorage.getItem('stash_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -7,15 +7,15 @@
    -------------------------------------------------------------------------- */
 :root {
   /* Color Palette */
-  --bg-primary: #0a0814;
-  --bg-secondary: #120e25;
-  --accent-purple: #7c3aed;
+  --bg-primary: #f6f8fb;
+  --bg-secondary: #ffffff;
+  --accent-purple: #6366f1;
   --accent-pink: #db2777;
-  --gradient-neon: linear-gradient(135deg, #7c3aed, #db2777);
+  --gradient-neon: linear-gradient(135deg, #6366f1, #db2777);
   --gradient-emerald: linear-gradient(135deg, #059669, #10b981);
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
   
   /* System States */
   --color-success: #10b981;
@@ -23,17 +23,17 @@
   --color-warning: #f59e0b;
   
   /* Glassmorphism Specs */
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(15, 23, 42, 0.06);
+  --glass-glow: 0 10px 30px rgba(15, 23, 42, 0.02);
   --glass-blur: blur(16px);
-  --radius-lg: 16px;
-  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
   --radius-sm: 8px;
   
   /* Fonts */
-  --font-header: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-header: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Outfit', sans-serif;
   
   /* Layout */
   --max-width: 1200px;
@@ -59,16 +59,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Ambient Radial Background Glows */
+/* Soft, classy static radial background glows without moving animations */
 body::before, body::after {
   content: '';
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 600px;
+  height: 600px;
   border-radius: 50%;
   z-index: -1;
-  filter: blur(150px);
-  opacity: 0.15;
+  filter: blur(160px);
+  opacity: 0.08;
   pointer-events: none;
 }
 
@@ -79,7 +79,7 @@ body::before {
 }
 
 body::after {
-  bottom: 10%;
+  bottom: -10%;
   right: -5%;
   background: var(--accent-pink);
 }
@@ -1428,5 +1428,837 @@ a, button, input {
 
 .ledger-row-clickable {
   cursor: pointer;
+}
+
+/* ==========================================================================
+   13. PREMIUM LIGHT MODE LANDING & HERO GRID STYLES
+   ========================================================================== */
+
+.light-auth-page {
+  background-color: #f6f8fb !important;
+  color: #0f172a !important;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ambient Radial Glows (Light Mode Optimized) */
+.light-auth-page::before, .light-auth-page::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  z-index: 0;
+  filter: blur(160px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.light-auth-page::before {
+  top: -10%;
+  left: -5%;
+  background: var(--accent-purple);
+}
+
+.light-auth-page::after {
+  bottom: -10%;
+  right: -5%;
+  background: var(--accent-pink);
+}
+
+/* Double-column grid container */
+.landing-grid-container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 64px;
+  align-items: center;
+  z-index: 10;
+  position: relative;
+}
+
+/* Left Hero Column */
+.landing-hero-col {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  text-align: left;
+}
+
+.landing-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  color: var(--accent-purple);
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.landing-title-main {
+  font-family: var(--font-header);
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+}
+
+.landing-desc {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.landing-features-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.landing-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.015);
+  transition: all 0.25s ease;
+}
+
+.landing-feature-card:hover {
+  background: rgba(255, 255, 255, 0.75);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.04);
+}
+
+.landing-feature-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.08);
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.landing-feature-card:nth-child(2) .landing-feature-icon-box {
+  background: rgba(219, 39, 119, 0.08);
+  color: var(--accent-pink);
+}
+
+.landing-feature-card:nth-child(3) .landing-feature-icon-box {
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--color-success);
+}
+
+.landing-feature-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.landing-feature-title {
+  font-family: var(--font-header);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.landing-feature-desc {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+/* Right Column: Premium Light Glassmorphism Card */
+.light-auth-card {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.04), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  border-radius: var(--radius-lg);
+  padding: 36px 32px !important;
+  width: 100%;
+  max-width: 440px;
+}
+
+.light-auth-card .auth-subtitle {
+  color: #64748b !important;
+  font-size: 0.9rem;
+}
+
+.light-auth-card .auth-tabs {
+  background: rgba(15, 23, 42, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-auth-card .auth-tab {
+  color: #64748b !important;
+}
+
+.light-auth-card .auth-tab.active {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03) !important;
+}
+
+.light-auth-card .input-label {
+  color: #475569 !important;
+}
+
+.light-auth-card .form-input {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.light-auth-card .form-input:focus {
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.12) !important;
+  background: #ffffff !important;
+}
+
+/* Responsiveness overrides */
+@media (max-width: 960px) {
+  .landing-grid-container {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding: 40px 20px;
+  }
+  
+  .landing-hero-col {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .landing-badge {
+    align-self: center;
+  }
+  
+  .landing-title-main {
+    font-size: 2.5rem;
+  }
+  
+  .light-auth-card {
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================================================
+   14. PREMIUM LIGHT MODE DASHBOARD & FUNCTIONAL ELEMENTS
+   ========================================================================== */
+
+.light-app-layout {
+  background-color: #f6f8fb !important;
+  color: #0f172a !important;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Light mode background ambient glows */
+.light-app-layout::before, .light-app-layout::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  z-index: 0;
+  filter: blur(160px);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+.light-app-layout::before {
+  top: -10%;
+  left: -5%;
+  background: var(--accent-purple);
+}
+
+.light-app-layout::after {
+  bottom: -10%;
+  right: -5%;
+  background: var(--accent-pink);
+}
+
+/* Ensure child elements stack correctly above glows */
+.light-app-layout > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Premium Light Minimalist Balance Card Widget */
+.balance-widget-light {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.18) !important;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 220px;
+  justify-content: space-between;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.balance-widget-light .balance-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.balance-widget-light .balance-amount {
+  color: #ffffff !important;
+  font-family: var(--font-header);
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.balance-widget-light .card-ref-id {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.balance-widget-light .card-user-name {
+  color: #ffffff !important;
+}
+
+.balance-widget-light .card-copy-btn {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+.balance-widget-light .card-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  transform: scale(1.08);
+}
+
+/* Navbar */
+.light-app-layout .navbar {
+  background: rgba(246, 248, 251, 0.7) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .navbar .status-badge {
+  background: rgba(15, 23, 42, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  color: #475569 !important;
+}
+
+.light-app-layout .navbar .user-tag {
+  color: #0f172a !important;
+  font-weight: 700;
+}
+
+/* Glass Panels: Dashboard widgets, Feed panel, diagnostics, analytics, faucet */
+.light-app-layout .glass-panel {
+  background: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.02), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .glass-panel:hover {
+  border-color: rgba(124, 58, 237, 0.15) !important;
+}
+
+.light-app-layout .diagnostics-panel, 
+.light-app-layout .analytics-panel,
+.light-app-layout .sparkline-trend-card {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7) !important;
+  color: #0f172a !important;
+}
+
+/* Headers */
+.light-app-layout h2,
+.light-app-layout h3,
+.light-app-layout .diagnostics-title,
+.light-app-layout .analytics-title,
+.light-app-layout .balance-label,
+.light-app-layout .feed-header h2 {
+  color: #0f172a !important;
+}
+
+.light-app-layout .text-muted,
+.light-app-layout .diagnostic-label,
+.light-app-layout .legend-header,
+.light-app-layout .compliance-title,
+.light-app-layout .row-date,
+.light-app-layout .sparkline-header {
+  color: #64748b !important;
+}
+
+.light-app-layout .diagnostic-item {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-app-layout .diagnostic-value {
+  color: #0f172a !important;
+}
+
+.light-app-layout .ping-speed {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #334155 !important;
+}
+
+/* Category Expenditures Text colors */
+.light-app-layout [style*="color: var(--text-secondary)"] {
+  color: #334155 !important;
+}
+
+.light-app-layout [style*="color: var(--text-muted)"] {
+  color: #64748b !important;
+}
+
+.light-app-layout [style*="border-top: 1px solid rgba(255, 255, 255, 0.05)"] {
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Progress charts */
+.light-app-layout .progress-bg-circle {
+  stroke: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-app-layout .legend-bar-container {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Search input inside ledger feed */
+.light-app-layout .search-input-fancy {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .search-input-fancy:focus {
+  border-color: var(--accent-pink) !important;
+  box-shadow: 0 0 15px rgba(219, 39, 119, 0.12) !important;
+  background: #ffffff !important;
+}
+
+.light-app-layout .search-icon-inside {
+  color: #64748b !important;
+}
+
+/* Filter Tab buttons */
+.light-app-layout .filter-tabs {
+  background: rgba(15, 23, 42, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-app-layout .filter-tab-btn {
+  color: #64748b !important;
+}
+
+.light-app-layout .filter-tab-btn.active {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Ledger List Rows */
+.light-app-layout .ledger-row {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01) !important;
+}
+
+.light-app-layout .ledger-row:hover {
+  background: #ffffff !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.03) !important;
+  transform: translateX(6px);
+}
+
+.light-app-layout .row-partner {
+  color: #0f172a !important;
+  font-weight: 600;
+}
+
+.light-app-layout .ledger-empty {
+  color: #64748b !important;
+}
+
+/* Action Buttons inside Dashboard */
+.light-app-layout .btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #334155 !important;
+}
+
+.light-app-layout .btn:hover {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .btn-neon {
+  background: var(--gradient-neon) !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.light-app-layout .btn-neon:hover {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.light-app-layout .btn-danger {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border: 1px solid rgba(239, 68, 68, 0.15) !important;
+  color: var(--color-danger) !important;
+}
+
+.light-app-layout .btn-danger:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+/* Modals & Transfer forms in light mode */
+.light-app-layout .modal-overlay {
+  background: rgba(15, 23, 42, 0.35) !important;
+}
+
+.light-app-layout .modal-content {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid #ffffff !important;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.1) !important;
+}
+
+.light-app-layout .modal-header h3 {
+  color: #0f172a !important;
+}
+
+.light-app-layout .close-btn {
+  color: #64748b !important;
+}
+
+.light-app-layout .close-btn:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .input-label {
+  color: #475569 !important;
+}
+
+.light-app-layout .form-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .form-input:focus {
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.12) !important;
+  background: #ffffff !important;
+}
+
+/* Custom Autocomplete elements */
+.light-app-layout .selected-recipient-chip {
+  background: rgba(124, 58, 237, 0.06) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+}
+
+.light-app-layout .selected-recipient-chip span[style*="color: var(--text-muted)"] {
+  color: #64748b !important;
+}
+
+.light-app-layout .autocomplete-dropdown {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06) !important;
+}
+
+.light-app-layout .autocomplete-dropdown-item {
+  color: #0f172a !important;
+}
+
+.light-app-layout .autocomplete-dropdown-item:hover {
+  background: rgba(124, 58, 237, 0.06) !important;
+}
+
+.light-app-layout .autocomplete-no-results {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #64748b !important;
+}
+
+.light-app-layout .category-select {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+}
+
+/* Security Step-Up PIN authenticate gate */
+.light-app-layout .pin-bubble {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light-app-layout .pin-button {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .pin-button:hover {
+  border-color: var(--accent-purple) !important;
+  background: rgba(124, 58, 237, 0.04) !important;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.05) !important;
+}
+
+/* Audit drawer in light mode */
+.light-app-layout .drawer-overlay {
+  background: rgba(15, 23, 42, 0.35) !important;
+}
+
+.light-app-layout .drawer-content {
+  background: #ffffff !important;
+  border-left: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #0f172a !important;
+  box-shadow: -10px 0 45px rgba(15, 23, 42, 0.08) !important;
+}
+
+.light-app-layout .drawer-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.light-app-layout .drawer-header h3 {
+  color: #0f172a !important;
+}
+
+.light-app-layout .drawer-receipt-card {
+  background: rgba(0, 0, 0, 0.01) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+.light-app-layout .drawer-receipt-card::before {
+  opacity: 0.08 !important;
+}
+
+.light-app-layout .drawer-amount {
+  color: #0f172a !important;
+}
+
+.light-app-layout .drawer-hash-box {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+.light-app-layout .drawer-hash-text {
+  color: #334155 !important;
+}
+
+.light-app-layout .compliance-item {
+  background: rgba(0, 0, 0, 0.01) !important;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+}
+
+.light-app-layout .compliance-label {
+  color: #0f172a !important;
+}
+
+.light-app-layout .compliance-desc {
+  color: #64748b !important;
+}
+
+/* Floating toasts inside light mode */
+.light-app-layout .toast {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-left-width: 4px !important;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06) !important;
+  color: #0f172a !important;
+}
+
+.light-app-layout .toast-title {
+  color: #0f172a !important;
+}
+
+.light-app-layout .toast-msg {
+  color: #475569 !important;
+}
+
+/* ==========================================================================
+   15. HARDWARE-ACCELERATED DYNAMIC MOTION UTILITIES (3D TILT & MOUSE SPOTLIGHT)
+   ========================================================================== */
+
+/* 3D Tilt Card Base */
+.tilt-card {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.3s ease, 
+              border-color 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tilt-card:hover {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) translateY(-4px);
+  box-shadow: 0 15px 40px rgba(124, 58, 237, 0.08), 
+              0 0 25px rgba(124, 58, 237, 0.03) !important;
+  border-color: rgba(124, 58, 237, 0.2) !important;
+}
+
+/* Moving Spotlight Hover Border & Backdrop Glow */
+.interactive-spotlight {
+  position: relative;
+}
+
+/* Moving Border-Glow Spotlight Mask */
+.interactive-spotlight::before {
+  content: '';
+  position: absolute;
+  inset: -1px; /* Overlap border exactly */
+  border-radius: inherit;
+  padding: 1.2px; /* Border width pixel thickness */
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(124, 58, 237, 0.55) 0%,
+    rgba(219, 39, 119, 0.35) 50%,
+    transparent 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Moving Soft Backdrop Spotlight Glow */
+.interactive-spotlight::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    220px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(124, 58, 237, 0.038) 0%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Activate spotlights on card hover */
+.interactive-spotlight:hover::before,
+.interactive-spotlight:hover::after {
+  opacity: 1;
+}
+
+/* Extra micro interaction refinements */
+.landing-feature-card {
+  z-index: 5;
+}
+.landing-feature-card * {
+  transform: translateZ(10px); /* Enhance 3D layering effect on feature details */
+}
+
+.light-auth-card * {
+  transform: translateZ(5px);
+}
+
+/* ==========================================================================
+   16. PREMIUM LIGHT 3D HOLOGRAPHIC CARD OVERRIDES
+   ========================================================================== */
+.light-app-layout .balance-widget-3d {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.05), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.8), 
+              0 0 15px rgba(99, 102, 241, 0.02) !important;
+}
+
+.light-app-layout .balance-widget-3d:hover {
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 0 20px 40px rgba(219, 39, 119, 0.06), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+              0 0 25px rgba(219, 39, 119, 0.04) !important;
+}
+
+.light-app-layout .balance-widget-3d::after {
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.35) 0%, transparent 60%) !important;
+}
+
+.light-app-layout .card-holographic-foil {
+  background: linear-gradient(125deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.02) 30%, 
+    rgba(99, 102, 241, 0.08) 45%, 
+    rgba(219, 39, 119, 0.08) 55%, 
+    rgba(255,255,255,0.02) 70%, 
+    rgba(255,255,255,0) 100%) !important;
+  opacity: 0.95 !important;
+}
+
+.light-app-layout .balance-widget-3d .balance-label {
+  color: #475569 !important;
+}
+
+.light-app-layout .balance-widget-3d .balance-amount {
+  color: #0f172a !important;
+}
+
+.light-app-layout .balance-widget-3d .card-user-name {
+  color: #0f172a !important;
+}
+
+.light-app-layout .balance-widget-3d .card-ref-id {
+  color: #64748b !important;
+}
+
+.light-app-layout .balance-widget-3d .card-copy-btn {
+  background: rgba(0, 0, 0, 0.03) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  color: #475569 !important;
+}
+
+.light-app-layout .balance-widget-3d .card-copy-btn:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: var(--accent-pink) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
 }
 

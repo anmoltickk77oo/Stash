@@ -53,137 +53,193 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card glass-panel">
-        <div className="auth-header">
-          <div className="logo-container">
-            <svg
-              width="36"
-              height="36"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="url(#auth-logo-grad)"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ filter: 'drop-shadow(0 0 10px rgba(219,39,119,0.3))' }}
-            >
-              <defs>
-                <linearGradient id="auth-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#7c3aed" />
-                  <stop offset="100%" stopColor="#db2777" />
-                </linearGradient>
-              </defs>
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    <div className="light-auth-page">
+      {/* Double column grid layout */}
+      <div className="landing-grid-container">
+        
+        {/* Left Hero Content Section */}
+        <div className="landing-hero-col">
+          <span className="landing-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            Stash
+            Cryptographic Core
+          </span>
+          <h1 className="landing-title-main">
+            Real-Time P2P Ledger <br />
+            <span style={{ background: 'var(--gradient-neon)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              & Wallet Core.
+            </span>
+          </h1>
+          <p className="landing-desc">
+            Stash combines PostgreSQL row-level locks and SHA-256 transaction chains to deliver a real-time, ACID-compliant ledger that completely eliminates double-spending risks.
+          </p>
+
+          {/* Corporate trust items */}
+          <div className="landing-features-stack">
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div className="landing-feature-details">
+                <h4 className="landing-feature-title">ACID Invariant Settlement</h4>
+                <p className="landing-feature-desc">Prevents concurrency race conditions using strict FOR UPDATE database record locks.</p>
+              </div>
+            </div>
+
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </div>
+              <div className="landing-feature-details">
+                <h4 className="landing-feature-title">Verifiable Block Chain Links</h4>
+                <p className="landing-feature-desc">Verifies ledger validity in the browser via client-side WebCrypto SHA-256 hashing audits.</p>
+              </div>
+            </div>
+
+            <div className="landing-feature-card">
+              <div className="landing-feature-icon-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <div className="landing-feature-details">
+                <h4 className="landing-feature-title">Live WebSocket Syncs</h4>
+                <p className="landing-feature-desc">Dispatches credit and debit notices with live balance updates within milliseconds of settlement.</p>
+              </div>
+            </div>
           </div>
-          <p className="auth-subtitle">Real-Time, ACID-Compliant Financial Ledger</p>
         </div>
 
-        {/* Tab Toggle Navigation */}
-        <div className="auth-tabs">
-          <button
-            type="button"
-            onClick={() => handleTabChange(true)}
-            className={`auth-tab ${isLoginTab ? 'active' : ''}`}
-            disabled={loading}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabChange(false)}
-            className={`auth-tab ${!isLoginTab ? 'active' : ''}`}
-            disabled={loading}
-          >
-            Register
-          </button>
-        </div>
-
-        {alert && (
-          <div className={`auth-alert auth-alert-${alert.type}`}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              {alert.type === 'error' ? (
-                <>
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </>
-              ) : (
-                <>
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </>
-              )}
-            </svg>
-            {alert.message}
+        {/* Right Auth Form Section (Premium Light Glassmorphic Card) */}
+        <div className="light-auth-card auth-card glass-panel">
+          <div className="auth-header">
+            <div className="logo-container" style={{ justifyContent: 'center' }}>
+              <svg
+                width="34"
+                height="34"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="url(#auth-logo-grad)"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ filter: 'drop-shadow(0 0 8px rgba(99,102,241,0.2))' }}
+              >
+                <defs>
+                  <linearGradient id="auth-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#db2777" />
+                  </linearGradient>
+                </defs>
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              Stash
+            </div>
+            <p className="auth-subtitle">Real-Time Ledger Entry Portal</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit}>
-          {!isLoginTab && (
+          {/* Tab Toggle Navigation */}
+          <div className="auth-tabs">
+            <button
+              type="button"
+              onClick={() => handleTabChange(true)}
+              className={`auth-tab ${isLoginTab ? 'active' : ''}`}
+              disabled={loading}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange(false)}
+              className={`auth-tab ${!isLoginTab ? 'active' : ''}`}
+              disabled={loading}
+            >
+              Register
+            </button>
+          </div>
+
+          {alert && (
+            <div className={`auth-alert auth-alert-${alert.type}`}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                {alert.type === 'error' ? (
+                  <>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </>
+                )}
+              </svg>
+              {alert.message}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            {!isLoginTab && (
+              <div className="input-group">
+                <label className="input-label">Username</label>
+                <input
+                  type="text"
+                  placeholder="e.g. vinit_eng"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
+                  className="form-input"
+                  disabled={loading}
+                  required
+                />
+              </div>
+            )}
+
             <div className="input-group">
-              <label className="input-label">Username</label>
+              <label className="input-label">Email Address</label>
               <input
-                type="text"
-                placeholder="e.g. vinit_eng"
-                value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))}
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="form-input"
                 disabled={loading}
                 required
               />
             </div>
-          )}
 
-          <div className="input-group">
-            <label className="input-label">Email Address</label>
-            <input
-              type="email"
-              placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
-              disabled={loading}
-              required
-            />
-          </div>
+            <div className="input-group">
+              <label className="input-label">Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-input"
+                disabled={loading}
+                required
+              />
+            </div>
 
-          <div className="input-group">
-            <label className="input-label">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
-              disabled={loading}
-              required
-            />
-          </div>
+            <button type="submit" className="btn btn-neon" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+              {loading ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="spinner-small"></span> Authenticating...
+                </span>
+              ) : isLoginTab ? (
+                'Sign In'
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+        </div>
 
-          <button type="submit" className="btn btn-neon" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
-            {loading ? (
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                <span className="spinner-small"></span> Authenticating...
-              </span>
-            ) : isLoginTab ? (
-              'Sign In'
-            ) : (
-              'Create Account'
-            )}
-          </button>
-        </form>
       </div>
     </div>
   );

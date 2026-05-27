@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useSocket } from '../hooks/useSocket';
 import api from '../services/api';
@@ -6,12 +6,68 @@ import Navbar from '../components/layout/Navbar';
 import LedgerRow from '../components/shared/LedgerRow';
 import TransferModal from '../components/shared/TransferModal';
 import AuditReceiptDrawer from '../components/shared/AuditReceiptDrawer';
-
 export default function Dashboard() {
   const { user, token } = useContext(AuthContext);
   
   // Real-time link hooks with active latency diagnostic engine
   const { socket, connected, latency } = useSocket(token);
+
+  // 3D Tilt Card Ref & Event Handlers
+  const cardRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Set custom properties for mouse spotlight and sheen reflection
+    card.style.setProperty('--mx', `${x}px`);
+    card.style.setProperty('--my', `${y}px`);
+
+    const cardX = rect.left + rect.width / 2;
+    const cardY = rect.top + rect.height / 2;
+    const dx = e.clientX - cardX;
+    const dy = e.clientY - cardY;
+
+    // Tilt calculations up to 8 degrees
+    const maxTilt = 8;
+    const px = dx / (rect.width / 2);
+    const py = dy / (rect.height / 2);
+
+    const rx = -py * maxTilt;
+    const ry = px * maxTilt;
+
+    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+
+    // Specular light shimmer sweeping card face
+    const shimmerX = (x / rect.width) * 100;
+    const shimmerY = (y / rect.height) * 100;
+    card.style.setProperty('--foil-x', `${shimmerX}%`);
+    card.style.setProperty('--foil-y', `${shimmerY}%`);
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    card.style.transform = '';
+    card.style.setProperty('--mx', '50%');
+    card.style.setProperty('--my', '50%');
+    card.style.setProperty('--foil-x', '50%');
+    card.style.setProperty('--foil-y', '50%');
+  };
+
+  const handleSpotlightMouseMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   // Interface States
   const [balance, setBalance] = useState('0.00');
@@ -31,48 +87,12 @@ export default function Dashboard() {
   // Copy Clipboard feedback
   const [copiedId, setCopiedId] = useState(false);
 
-  // Card 3D holographic tilt properties
-  const [cardStyle, setCardStyle] = useState({
-    transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
-    '--mx': '50%',
-    '--my': '50%',
-    '--foil-x': '50%',
-    '--foil-y': '50%'
-  });
+  // Cryptographic Ledger Verification states
+  const [ledgerStatus, setLedgerStatus] = useState('AUDITING'); // AUDITING, VERIFIED, COMPROMISED
+  const [verifiedBlocksCount, setVerifiedBlocksCount] = useState(0);
 
-  const handleMouseMove = (e) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const px = x / rect.width;
-    const py = y / rect.height;
-    
-    const maxTiltX = 12;
-    const maxTiltY = 12;
-    
-    const tiltX = (py - 0.5) * -maxTiltX;
-    const tiltY = (px - 0.5) * maxTiltY;
-    
-    setCardStyle({
-      transform: `perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
-      '--mx': `${px * 100}%`,
-      '--my': `${py * 100}%`,
-      '--foil-x': `${(px * 100) / 2 + 25}%`,
-      '--foil-y': `${(py * 100) / 2 + 25}%`
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setCardStyle({
-      transform: 'perspective(1200px) rotateX(0deg) rotateY(0deg)',
-      '--mx': '50%',
-      '--my': '50%',
-      '--foil-x': '50%',
-      '--foil-y': '50%'
-    });
-  };
+  // Sandbox Developer Faucet loading states
+  const [faucetLoading, setFaucetLoading] = useState(false);
 
   const handleCopyWalletId = (e, walletId) => {
     e.stopPropagation();
@@ -119,10 +139,27 @@ export default function Dashboard() {
     }
   };
 
+  // 2b. Audit overall database cryptographic chain integrity
+  const auditLedgerIntegrity = async () => {
+    try {
+      const res = await api.get('/wallet/verify-ledger');
+      if (res.data.success) {
+        setLedgerStatus('VERIFIED');
+        setVerifiedBlocksCount(res.data.verifiedCount);
+      } else {
+        setLedgerStatus('COMPROMISED');
+      }
+    } catch (err) {
+      console.error('Ledger verification failure:', err);
+      setLedgerStatus('COMPROMISED');
+    }
+  };
+
   // Initial mount data load
   useEffect(() => {
     fetchBalance();
     fetchHistory();
+    auditLedgerIntegrity();
   }, []);
 
   // 3. Real-Time Socket Event Listener Setup
@@ -144,6 +181,7 @@ export default function Dashboard() {
       // Re-fetch balance and history immediately to sync with PostgreSQL truth
       fetchBalance();
       fetchHistory();
+      auditLedgerIntegrity();
     });
 
     return () => {
@@ -160,6 +198,7 @@ export default function Dashboard() {
     );
     fetchBalance();
     fetchHistory();
+    auditLedgerIntegrity();
   };
 
   // Open the sliding receipt drawer
@@ -179,6 +218,54 @@ export default function Dashboard() {
 
   const totalVolume = totalIncome + totalExpense;
   const incomeRatio = totalVolume > 0 ? (totalIncome / totalVolume) * 100 : 50;
+
+  // Group outgoing debits by category for budgeting visual breakdown
+  const categoryDebits = {
+    Transfer: 0,
+    Groceries: 0,
+    Rent: 0,
+    Salary: 0,
+    Freelance: 0,
+    Utilities: 0
+  };
+
+  history
+    .filter((tx) => parseInt(tx.sender_id) === parseInt(user?.wallet_id))
+    .forEach((tx) => {
+      const cat = tx.category || 'Transfer';
+      if (categoryDebits.hasOwnProperty(cat)) {
+        categoryDebits[cat] += parseFloat(tx.amount);
+      } else {
+        categoryDebits[cat] = parseFloat(tx.amount);
+      }
+    });
+
+  const totalDebits = Object.values(categoryDebits).reduce((a, b) => a + b, 0);
+
+  // Sandbox developer faucet refill trigger
+  const handleFaucetRequest = async () => {
+    setFaucetLoading(true);
+    try {
+      await api.post('/wallet/faucet');
+      addToast(
+        '📥 Faucet Funds Minted',
+        'Successfully credited $500.00 to your ledger wallet.',
+        'credit'
+      );
+      fetchBalance();
+      fetchHistory();
+      auditLedgerIntegrity();
+    } catch (err) {
+      console.error(err);
+      addToast(
+        '⚠️ Faucet Exhausted',
+        err.response?.data?.error || 'Failed to mint faucet liquidity.',
+        'debit'
+      );
+    } finally {
+      setFaucetLoading(false);
+    }
+  };
 
   // Radial Ring Metrics
   const radius = 36;
@@ -261,7 +348,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="app-layout">
+    <div className="light-app-layout">
       {/* Navbar Banner with socket status propagation */}
       <Navbar connected={connected} />
 
@@ -271,17 +358,15 @@ export default function Dashboard() {
         {/* Left Side: interactive Widgets panel */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* Advanced 3D Tilting Card */}
+          {/* Elegant dynamic 3D holographic balance card */}
           <div className="balance-card-wrapper">
             <div 
-              className="glass-panel balance-widget-3d"
-              style={cardStyle}
+              ref={cardRef}
+              className="balance-widget-3d"
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
-              {/* Foil lighting texture sheet */}
               <div className="card-holographic-foil"></div>
-              
               <div className="card-header-decor">
                 <div className="card-chip"></div>
                 <span className="card-brand">STASH PREMIER</span>
@@ -289,9 +374,9 @@ export default function Dashboard() {
 
               <div className="card-body-decor">
                 <h2 className="balance-label">Total Balance</h2>
-                <div className="balance-amount" style={{ fontSize: '2.6rem', fontWeight: 800, textShadow: '0 0 15px rgba(255,255,255,0.1)' }}>
+                <div className="balance-amount">
                   {loadingBalance ? (
-                    <span className="text-muted" style={{ fontSize: '1.2rem' }}>Syncing Ledger...</span>
+                    <span style={{ fontSize: '1.2rem', color: 'rgba(255, 255, 255, 0.7)' }}>Syncing Ledger...</span>
                   ) : (
                     `$${parseFloat(balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                   )}
@@ -364,8 +449,36 @@ export default function Dashboard() {
             Send Money
           </button>
 
+          {/* Sandbox Developer Faucet Widget */}
+          <div 
+            className="glass-panel interactive-spotlight" 
+            onMouseMove={handleSpotlightMouseMove}
+            style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+          >
+            <h3 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" strokeWidth="2.5">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              Sandbox Faucet
+            </h3>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>Mint $500.00 instantly to test transfers in demonstration environments.</p>
+            <button
+              className="btn"
+              onClick={handleFaucetRequest}
+              disabled={loadingBalance || faucetLoading}
+              style={{ width: '100%', padding: '10px', borderColor: 'rgba(16, 185, 129, 0.3)', color: 'var(--color-success)', background: 'rgba(16, 185, 129, 0.04)' }}
+              onMouseEnter={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.08)'}
+              onMouseLeave={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.04)'}
+            >
+              {faucetLoading ? 'Minting...' : 'Request $500.00 Funds'}
+            </button>
+          </div>
+
           {/* Real-time Socket Diagnostics panel */}
-          <div className="diagnostics-panel">
+          <div 
+            className="diagnostics-panel interactive-spotlight"
+            onMouseMove={handleSpotlightMouseMove}
+          >
             <div className="diagnostics-header">
               <h3 className="diagnostics-title">
                 <svg
@@ -411,11 +524,34 @@ export default function Dashboard() {
                   🛡️ Row locks (FOR UPDATE) locked
                 </span>
               </div>
+              <div className="diagnostic-item">
+                <span className="diagnostic-label">Ledger Chain Seal:</span>
+                <span className="diagnostic-value">
+                  {ledgerStatus === 'AUDITING' && (
+                    <span style={{ color: 'var(--text-muted)' }}>Auditing...</span>
+                  )}
+                  {ledgerStatus === 'VERIFIED' && (
+                    <span style={{ color: 'var(--color-success)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="latency-indicator latency-excellent"></span>
+                      VERIFIED ({verifiedBlocksCount} Seals)
+                    </span>
+                  )}
+                  {ledgerStatus === 'COMPROMISED' && (
+                    <span style={{ color: 'var(--color-danger)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="latency-indicator latency-degraded"></span>
+                      CHAIN CORRUPTED
+                    </span>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* SVG Visual Financial Analytics */}
-          <div className="analytics-panel">
+          <div 
+            className="analytics-panel interactive-spotlight"
+            onMouseMove={handleSpotlightMouseMove}
+          >
             <h3 className="analytics-title">Ledger Visual Flow</h3>
             <div className="analytics-content">
               {/* Radial Progress Ring representing credits flow */}
@@ -475,6 +611,41 @@ export default function Dashboard() {
               </div>
             </div>
 
+            {/* Categorical Budgeting Breakdown */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px', marginTop: '16px' }}>
+              <h4 style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Category Expenditures
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {Object.entries(categoryDebits).map(([cat, val]) => {
+                  const percent = totalDebits > 0 ? (val / totalDebits) * 100 : 0;
+                  const barColor = 
+                    cat === 'Rent' ? '#3b82f6' : 
+                    cat === 'Groceries' ? '#10b981' : 
+                    cat === 'Salary' ? '#a855f7' : 
+                    cat === 'Freelance' ? '#14b8a6' : 
+                    cat === 'Utilities' ? '#f59e0b' : '#ec4899';
+                  
+                  return (
+                    <div key={cat} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 600 }}>
+                        <span style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: barColor }}></span>
+                          {cat}
+                        </span>
+                        <span style={{ color: 'var(--text-muted)' }}>
+                          ${val.toFixed(2)} <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.15)' }}>({Math.round(percent)}%)</span>
+                        </span>
+                      </div>
+                      <div className="legend-bar-container" style={{ height: '5px' }}>
+                        <div className="legend-bar" style={{ width: `${percent}%`, backgroundColor: barColor, boxShadow: `0 0 8px ${barColor}` }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Simulated Neon Sparkline Graph showing balance trend */}
             {!loadingHistory && history.length > 0 && (
               <div className="sparkline-trend-card">
@@ -505,7 +676,10 @@ export default function Dashboard() {
         </section>
 
         {/* Right Side: Ledger Feed with advanced Filters and Search */}
-        <section className="glass-panel live-feed-panel">
+        <section 
+          className="glass-panel live-feed-panel interactive-spotlight"
+          onMouseMove={handleSpotlightMouseMove}
+        >
           <div className="feed-header" style={{ marginBottom: '12px' }}>
             <h2>
               <svg

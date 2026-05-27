@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import LuxuryBackground from './components/shared/LuxuryBackground';
 
 function MainApp() {
   const { user, loading } = useContext(AuthContext);
@@ -23,7 +24,9 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
+      <LuxuryBackground />
       <MainApp />
     </AuthProvider>
   );
 }
+

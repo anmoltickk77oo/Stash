@@ -30,6 +30,10 @@ CREATE TABLE transactions (
     receiver_wallet_id INT NOT NULL REFERENCES wallets(id),
     amount DECIMAL(15, 2) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    previous_hash VARCHAR(64),
+    transaction_hash VARCHAR(64) UNIQUE,
+    category VARCHAR(30) DEFAULT 'Transfer',
+    memo VARCHAR(200),
     -- Safeguards: Amount must be positive, and users cannot send money to themselves
     CONSTRAINT chk_transaction_amount_positive CHECK (amount > 0.00),
     CONSTRAINT chk_self_transfer CHECK (sender_wallet_id <> receiver_wallet_id)
