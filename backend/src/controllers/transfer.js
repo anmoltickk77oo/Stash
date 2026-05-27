@@ -224,7 +224,19 @@ exports.executeFaucet = async (req, res) => {
             return res.status(404).json({ error: 'User wallet structure not found.' });
         }
         const receiver_wallet_id = userWalletCheck.rows[0].id;
-        const sender_wallet_id = 4; // Hardcoded System Faucet Wallet ID from seed.sql
+        
+        // Fetch System Faucet wallet ID dynamically
+        const faucetUserCheck = await client.query("SELECT id FROM users WHERE username = 'system_faucet'");
+        if (faucetUserCheck.rows.length === 0) {
+            return res.status(404).json({ error: 'System Faucet user not found.' });
+        }
+        const faucet_user_id = faucetUserCheck.rows[0].id;
+        
+        const faucetWalletCheck = await client.query('SELECT id FROM wallets WHERE user_id = $1', [faucet_user_id]);
+        if (faucetWalletCheck.rows.length === 0) {
+            return res.status(404).json({ error: 'System Faucet wallet structure not found.' });
+        }
+        const sender_wallet_id = faucetWalletCheck.rows[0].id;
         
         if (sender_wallet_id === receiver_wallet_id) {
             return res.status(400).json({ error: 'System Faucet cannot transfer to itself.' });
