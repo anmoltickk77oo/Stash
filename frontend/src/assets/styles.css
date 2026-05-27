@@ -2328,4 +2328,435 @@ a, button, input {
   border-radius: 50px;
 }
 
+/* ==========================================================================
+   17. SECURITY AUTHENTICATION GATE & PIN PAD STYLES
+   ========================================================================== */
+.security-gate-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(8, 6, 23, 0.94) !important; /* Extremely high fidelity dark overlays */
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-radius: 28px !important; /* Perfect rounding alignment with TransferModal */
+  z-index: 1000 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.security-gate-content {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: gpayPop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.confirm-details-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.confirm-details-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.confirm-details-amount {
+  font-family: var(--font-header);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.confirm-details-peer {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.confirm-details-peer span {
+  color: var(--accent-purple);
+  font-weight: 600;
+}
+
+.auth-dots-container {
+  display: flex;
+  gap: 16px;
+  margin: 10px 0;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.auth-dot.active {
+  background: var(--gradient-neon);
+  border-color: transparent;
+  transform: scale(1.3);
+  box-shadow: 0 0 12px var(--accent-pink);
+}
+
+.auth-dot.error {
+  background: var(--color-danger);
+  border-color: transparent;
+  box-shadow: 0 0 12px var(--color-danger);
+}
+
+.auth-dot.success {
+  background: var(--color-success);
+  border-color: transparent;
+  box-shadow: 0 0 12px var(--color-success);
+}
+
+.pin-pad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 20px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 10px;
+}
+
+.pin-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.35rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.pin-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: scale(1.08);
+  color: var(--accent-purple);
+}
+
+.pin-btn:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.pin-btn.btn-action {
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.pin-btn.btn-action:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+  transform: scale(1.05);
+}
+
+/* Biometric Scan Section */
+.biometric-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 260px;
+  position: relative;
+  gap: 16px;
+}
+
+.biometric-scanner-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px dashed rgba(124, 58, 237, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: rotate-dashed 20s linear infinite;
+  transition: border-color 0.3s ease;
+}
+
+.biometric-scanner-ring.scanning {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+}
+
+.biometric-scanner-ring.success {
+  border: 2px solid var(--color-success);
+  animation: none;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+}
+
+.biometric-scanner-ring.error {
+  border: 2px solid var(--color-danger);
+  animation: none;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+}
+
+.biometric-icon-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  transition: all 0.3s ease;
+}
+
+.biometric-scanner-ring.scanning .biometric-icon-inner {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: var(--accent-purple);
+  animation: heart-scale 1.5s infinite ease-in-out;
+}
+
+.biometric-scanner-ring.success .biometric-icon-inner {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.biometric-radar-beam {
+  position: absolute;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-pink), var(--accent-purple), var(--accent-pink), transparent);
+  box-shadow: 0 0 10px var(--accent-purple);
+  animation: laser-sweep 2s infinite ease-in-out;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.biometric-status-text {
+  font-family: var(--font-header);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+  height: 20px;
+  transition: color 0.3s ease;
+}
+
+.status-scanning {
+  color: var(--accent-purple);
+  animation: flash-text 1.5s infinite ease-in-out;
+}
+
+.status-success {
+  color: var(--color-success);
+}
+
+.status-idle {
+  color: var(--text-secondary);
+}
+
+/* Security Toggle Trigger Button */
+.security-toggle-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 10px;
+}
+
+.security-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* Animations */
+.shake-anim {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+@keyframes rotate-dashed {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes laser-sweep {
+  0%, 100% { top: 20%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  50% { top: 80%; }
+}
+
+@keyframes heart-scale {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes flash-text {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* SVG Path Draw checkmark */
+.checkmark-svg {
+  width: 50px;
+  height: 50px;
+}
+
+.checkmark-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: var(--color-success);
+  fill: none;
+  animation: stroke-draw 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  stroke: var(--color-success);
+  stroke-width: 4;
+  stroke-linecap: round;
+  fill: none;
+  animation: stroke-draw 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+}
+
+@keyframes stroke-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ==========================================================================
+   18. PREMIUM LIGHT THEME OVERRIDES FOR SECURITY GATE & PIN PAD
+   ========================================================================== */
+.light-app-layout .security-gate-overlay {
+  background: rgba(245, 247, 251, 0.94) !important; /* Premium ultra-light glass backdrop */
+  box-shadow: 
+    0 24px 60px -15px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
+}
+
+.light-app-layout .confirm-details-box {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.light-app-layout .confirm-details-peer {
+  color: #475569 !important;
+}
+
+.light-app-layout .auth-dot {
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.light-app-layout .pin-btn {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.light-app-layout .pin-btn:hover {
+  background: rgba(124, 58, 237, 0.06) !important;
+  border-color: rgba(124, 58, 237, 0.15) !important;
+  color: var(--accent-purple) !important;
+}
+
+.light-app-layout .pin-btn:active {
+  background: rgba(124, 58, 237, 0.12) !important;
+}
+
+.light-app-layout .pin-btn.btn-action {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b !important;
+}
+
+.light-app-layout .pin-btn.btn-action:hover {
+  color: #0f172a !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+.light-app-layout .biometric-icon-inner {
+  background: rgba(124, 58, 237, 0.04) !important;
+  border: 1px solid rgba(124, 58, 237, 0.1) !important;
+}
+
+.light-app-layout .biometric-scanner-ring.scanning .biometric-icon-inner {
+  background: rgba(124, 58, 237, 0.08) !important;
+  border-color: var(--accent-purple) !important;
+}
+
+.light-app-layout .security-toggle-btn {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: #475569 !important;
+}
+
+.light-app-layout .security-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #0f172a !important;
+}
+
+
 

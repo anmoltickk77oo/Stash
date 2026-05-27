@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
+import SecurityAuthGate from './SecurityAuthGate';
 
 const PREDEFINED_CATEGORIES = ['Transfer', 'Groceries', 'Rent', 'Salary', 'Freelance', 'Utilities'];
 
@@ -16,6 +17,10 @@ export default function TransferModal({ isOpen, onClose, onSuccess, currentBalan
   
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  // Security Gate State Variables
+  const [isAuthGateOpen, setIsAuthGateOpen] = useState(false);
+  const [validatedParams, setValidatedParams] = useState(null);
 
   const searchTimeoutRef = useRef(null);
 
@@ -30,6 +35,8 @@ export default function TransferModal({ isOpen, onClose, onSuccess, currentBalan
       setMemo('');
       setError(null);
       setLoading(false);
+      setIsAuthGateOpen(false);
+      setValidatedParams(null);
     }
   }, [isOpen]);
 
@@ -140,14 +147,30 @@ export default function TransferModal({ isOpen, onClose, onSuccess, currentBalan
       return;
     }
 
-    // Directly execute transfer
+    // Intercept with security step-up gate
+    setValidatedParams({
+      receiverWalletId: recipientWalletId,
+      amount: parsedAmount,
+      category,
+      memo,
+      recipientName: selectedRecipient ? selectedRecipient.username : recipientInput.trim()
+    });
+    setIsAuthGateOpen(true);
+  };
+
+  const handleAuthSuccess = async () => {
+    if (!validatedParams) return;
+    
+    setIsAuthGateOpen(false);
     setLoading(true);
+    setError(null);
+    
     try {
       const res = await api.post('/wallet/transfer', {
-        receiver_wallet_id: recipientWalletId,
-        amount: parsedAmount,
-        category,
-        memo
+        receiver_wallet_id: validatedParams.receiverWalletId,
+        amount: validatedParams.amount,
+        category: validatedParams.category,
+        memo: validatedParams.memo
       });
       
       onSuccess(res.data.transaction);
@@ -157,6 +180,7 @@ export default function TransferModal({ isOpen, onClose, onSuccess, currentBalan
       setError(err.response?.data?.error || 'Failed to settle ledger atomic transfer.');
     } finally {
       setLoading(false);
+      setValidatedParams(null);
     }
   };
 
@@ -363,6 +387,19 @@ export default function TransferModal({ isOpen, onClose, onSuccess, currentBalan
             </button>
           </div>
         </form>
+
+        {isAuthGateOpen && validatedParams && (
+          <SecurityAuthGate
+            isOpen={isAuthGateOpen}
+            onClose={() => {
+              setIsAuthGateOpen(false);
+              setValidatedParams(null);
+            }}
+            onVerifySuccess={handleAuthSuccess}
+            amount={validatedParams.amount}
+            recipientName={validatedParams.recipientName}
+          />
+        )}
 
       </div>
     </div>
