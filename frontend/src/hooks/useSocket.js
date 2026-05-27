@@ -18,7 +18,7 @@ export const useSocket = (token) => {
     }
 
     // Connect to Socket.IO server passing the JWT securely in the connection handshake auth payload
-    const socket = io({
+    const socket = io(import.meta.env.VITE_API_URL || undefined, {
       auth: { token },
       reconnectionAttempts: 5,
       reconnectionDelay: 2000,
