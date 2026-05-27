@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http'); // Native Node utility
 const { Server } = require('socket.io');
+const path = require('path');
 require('dotenv').config();
 
 const { pool } = require('./src/config/db');
@@ -34,6 +35,19 @@ app.use(express.json());
 // Routes Mounting
 app.use('/api/auth', authRoutes);
 app.use('/api/wallet', walletRoutes);
+
+// Serve static frontend files from 'public' folder in production
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback non-API router calls back to React Client app (supporting SPA routing)
+app.get('*', (req, res) => {
+    // Only serve index.html if the request isn't an API query
+    if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    } else {
+        res.status(404).json({ error: 'Endpoint not found' });
+    }
+});
 
 // Base System Health Check Route
 app.get('/health', async (req, res) => {

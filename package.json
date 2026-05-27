@@ -1,0 +1,12 @@
+{
+  "name": "stash-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run install:frontend && npm run install:backend && npm run build:frontend",
+    "start": "cd backend && npm start"
+  }
+}
