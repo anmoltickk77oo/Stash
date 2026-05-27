@@ -817,39 +817,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Viewport-anchored Floating Action Dock */}
-      <div className="floating-action-dock">
-        <span className="floating-action-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-          </svg>
-          Actions
-        </span>
-        <button
-          className="btn btn-neon"
-          onClick={() => setIsModalOpen(true)}
-          disabled={loadingBalance}
-          style={{ padding: '8px 16px', margin: 0 }}
-        >
-          Send Money
-        </button>
-        <button
-          className="btn"
-          onClick={() => setIsFaucetModalOpen(true)}
-          disabled={loadingBalance}
-          style={{ 
-            padding: '8px 16px', 
-            margin: 0, 
-            borderColor: 'rgba(16, 185, 129, 0.3)', 
-            color: 'var(--color-success)', 
-            background: 'rgba(16, 185, 129, 0.04)' 
-          }}
-          onMouseEnter={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.08)'}
-          onMouseLeave={(e) => e.target.style.background = 'rgba(16, 185, 129, 0.04)'}
-        >
-          Claim Faucet
-        </button>
-      </div>
+
 
       {/* Transfer Modal overlay */}
       <TransferModal
